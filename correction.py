@@ -48,7 +48,7 @@ def generate_fixations_left_skip_regression(aois_with_tokens):
 
 
 # write a function generate offset error as described in the paper
-def error_offset(x_offset, y_offset, fixations):
+def error_offset(x_offset, y_offset, error_magnitude, fixations):
     '''creates error to move fixations (shift in dissertation)'''
     
     pass
@@ -81,9 +81,70 @@ def error_noise(y_noise_probability, y_noise, duration_noise, fixations):
     
     return results
 
+# slope
+def error_slope(duration_slope, fixations):
+
+    results = []
+
+    for fix in fixations:
+
+        x, y, duration = fix[0], fix[1], fix[2]
+
+        results.append([x, y + x * duration_slope, duration])
+
+    return results
+
 # shift
+def error_shift(duration_shift, fixations):
+    ''' creates a downward shift of fixation errors '''
 
+    results = []
 
+    for fix in fixations:
+
+        x, y, duration = fix[0], fix[1], fix[2]
+
+        results.append([x, y + y * duration_shift, duration])
+    
+    return results
+
+# within-line regression
+def error_within_line_regress(regression_probability, lines):
+
+    results = []
+
+    for line in lines:
+
+        x, y, duration = line[0], line[1], line[2]
+
+        results.append([x, y, duration])
+
+        if random.random() < regression_probability:
+
+            y = random.triangular(results[0][1], x, y)
+
+            results.append([x + random.random(), y, duration])   
+
+    return results
+
+# between line regression
+def error_between_line_regress(regression_probability, lines):
+
+    results = []
+
+    for line in lines:
+
+        x, y, duration = line[0], line[1], line[2]
+
+        results.append([x, y, duration])
+
+        if random.random() < regression_probability:
+
+            y = random.triangular(results[0][1], y, y)
+
+            results.append([x + random.random(), y, duration])   
+
+    return results
 
 # droop
 
