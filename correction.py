@@ -109,25 +109,23 @@ def error_shift(duration_shift, fixations):
     return results
 
 # within-line regression
-def error_within_line_regress(regression_probability, lines):
+def error_within_line_regress(regression_probability, fixation):
+    '''creates within line regression'''
 
     results = []
 
-    adjusted_prob = regression_probability*0.1*0.5
-    start_x = lines[0][0]
-    
-    for line in range(len(lines)):
-
-        x, y = lines[line][0], lines[line][1]
-
-        if (line > 0):
-            if (random.random() < adjusted_prob) and (x > lines[line-1][0]):
-                results.append([x - random.triangular(0, x-start_x, 0), y, lines[line][2]])
-            else:
-                results.append([x, y, lines[line][2]])
-        else:
-            results.append([x, y, lines[line][2]])
-    
+    for fix in fixation:
+        
+        x, y, duration = fix[0], fix[1], fix[2]
+            
+        results.append([x, y , duration])
+        
+        if random.random() < regression_probability:
+            
+            x = int(random.triangular(results[0][0], x, x))
+            
+            results.append([x, y + random.random(), duration])
+            
     return results
 
 # between line regression
@@ -142,16 +140,13 @@ def error_between_line_regress(regression_probability, lines):
         results.append([x, y, duration])
 
         if random.random() < regression_probability:
-            try:
                 
-                y = random.triangular(results[0][1], y, y)
+            y = random.triangular(results[0][1], y, y)
 
-            except ValueError:
-                pass
-
-            results.append([x + random.random(), y, duration])   
+            results.append([x, y + random.random(), duration])   
 
     return results
+
 
 # droop
 
